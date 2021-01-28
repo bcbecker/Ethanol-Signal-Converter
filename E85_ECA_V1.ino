@@ -29,8 +29,10 @@ bool HzAvail = 0;             // averagedHz is or is not able to be calculated
 float supplyVoltage = 5.0;    // sets voltage on 5V pin. Corrects the PWM output for unexact 5V
                               // *CHANGED FROM 4.9 TO 5.0 BASED ON READINGS ON BOARD*
 
-double sum = 0;               // used in frequency averaging
+float sum = 0;                // used in frequency averaging
 int count = 0;                // used in frequency averaging
+
+
 
 void setupTimer()   // setup timer control/interupt
 {           
@@ -41,19 +43,27 @@ void setupTimer()   // setup timer control/interupt
   TCNT1 = 0;       // start from 0
 }
 
+
 ISR(TIMER1_CAPT_vect)     // PULSE DETECTED!  (interrupt automatically triggered, not called by main program)
 {
-  if (ICR1 > 5) {
-    revTick = ICR1 - 4;    // saves duration of last revolution (-4 for filtering)
+  if (ICR1 > 5)
+  {
+    revTick = ICR1 - 4;   // saves duration of last revolution (-4 for filtering)
     HzAvail = 1;
-  } else {
+  }
+  
+  else
+  {
     revTick = 0;
   }
   TCNT1 = 0;              // restarts timer for next revolution
 }
 
 ISR(TIMER1_OVF_vect)      // counter overflow/timeout
-{ revTick = 0; }          // ticks per second = 0
+{
+  revTick = 0;            // ticks per second = 0
+}
+
 
 
 void setup()
@@ -63,53 +73,67 @@ void setup()
   setPwmFrequency(outPin,1);  // modifies frequency on PWM output
   setupTimer();               // initializes timer
 }
- 
+
+
+
 void loop()
-{  
-  if (HzAvail = 1) {
-    
+{ 
+  if (HzAvail = 1)
+  {
     // averages several reading together
-    
     Hz = 62200 / revTick;         // 62200 determined to be optimal (oscope)
     sum = sum + Hz;
     count = count + 1;
     HzAvail = 0;
     
-    if (count > 30) {
+    if (count > 30)
+    {
       averagedHz = (sum / count);
-      Serial.println(averagedHz);
+      Serial.println(averagedHz + "Hz");
       sum = 0;
       count = 0;                  // resets sum and count for next loop
     }
-  } else {
+  }
+  
+  else
+  {
     Hz = 0;                       // if fuel is present, should never see this
     Serial.println("Hz Error");
   }
 
+
   // calculates ethanol percentage
   // zeroes out the ethanol percentage if the Hz measurement is not in range
-  
-  if ((averagedHz > 49) && (averagedHz < 151)) {
+  if ((averagedHz > 49) && (averagedHz < 151))
+  {
     ethanol = (averagedHz - 50);
-  } else {
+    Serial.println(ethanol + "%")
+  }
+  
+  else
+  {
     ethanol = 0;                // if fuel is present, should never see this
-    Serial.println("E Error");
+    Serial.println("E% Error");
   }
 
   expectedV = (((ethanol / 100) * 4) + 0.5);
+  Serial.println(expectedV + "V");
   
   // PWM Output
-  
   pwmOutput = (255 * (expectedV / supplyVoltage));   // calculates output PWM for ECU
-  analogWrite(outPin, pwmOutput);                  // writes the PWM value to output pin
-
+  analogWrite(outPin, pwmOutput);                    // writes the PWM value to output pin
 }
 
-void setPwmFrequency(int pin, int divisor) { // raises the timers linked to the PWM outputs
+
+
+void setPwmFrequency(int pin, int divisor)
+{                                            // raises the timers linked to the PWM outputs
   byte mode;                                 // so the PWM frequency can be raised or lowered.
                                              // Prescaler of 1 sets PWM output to 32KHz (pin 3, 11)
-  if(pin == 3 || pin == 11) {
-    switch(divisor) {
+  if(pin == 3 || pin == 11)
+  {
+    switch(divisor)
+    {
       case 1: mode = 0x01; break;
       case 8: mode = 0x02; break;
       case 32: mode = 0x03; break;
