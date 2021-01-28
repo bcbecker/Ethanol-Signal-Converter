@@ -89,7 +89,8 @@ void loop()
     if (count > 30)
     {
       averagedHz = (sum / count);
-      Serial.println(averagedHz + "Hz");
+      Serial.println(averagedHz);
+      Serial.print("Hz");
       sum = 0;
       count = 0;                  // resets sum and count for next loop
     }
@@ -107,7 +108,8 @@ void loop()
   if ((averagedHz > 49) && (averagedHz < 151))
   {
     ethanol = (averagedHz - 50);
-    Serial.println(ethanol + "%")
+    Serial.println(ethanol);
+    Serial.print("%");
   }
   
   else
@@ -117,7 +119,8 @@ void loop()
   }
 
   expectedV = (((ethanol / 100) * 4) + 0.5);
-  Serial.println(expectedV + "V");
+  Serial.println(expectedV);
+  Serial.print("V");
   
   // PWM Output
   pwmOutput = (255 * (expectedV / supplyVoltage));   // calculates output PWM for ECU
