@@ -68,10 +68,10 @@ ISR(TIMER1_OVF_vect)      // counter overflow/timeout
 
 void setup()
 {
-  Serial.begin(9600);         // initializes serial port
-  pinMode(inpPin,INPUT);      // initializes input pin
-  setPwmFrequency(outPin,1);  // modifies frequency on PWM output
-  setupTimer();               // initializes timer
+  Serial.begin(9600);
+  pinMode(inpPin,INPUT);
+  setPwmFrequency(outPin,1);
+  setupTimer();
 }
 
 
@@ -80,8 +80,8 @@ void loop()
 { 
   if (HzAvail = 1)
   {
-    // averages several reading together
-    Hz = 62200 / revTick;         // 62200 determined to be optimal (oscope)
+    // averages several reading together, 62200 determined to be optimal (oscope)
+    Hz = 62200 / revTick;
     sum = sum + Hz;
     count = count + 1;
     HzAvail = 0;
@@ -92,19 +92,18 @@ void loop()
       Serial.println(averagedHz);
       Serial.print("Hz");
       sum = 0;
-      count = 0;                  // resets sum and count for next loop
+      count = 0;
     }
   }
   
   else
   {
-    Hz = 0;                       // if fuel is present, should never see this
+    Hz = 0;
     Serial.println("Hz Error");
   }
 
 
-  // calculates ethanol percentage
-  // zeroes out the ethanol percentage if the Hz measurement is not in range
+  // calculates ethanol percentage, zeroing the ethanol percentage if Hz measurement is not in range
   if ((averagedHz > 49) && (averagedHz < 151))
   {
     ethanol = (averagedHz - 50);
@@ -114,7 +113,7 @@ void loop()
   
   else
   {
-    ethanol = 0;                // if fuel is present, should never see this
+    ethanol = 0;
     Serial.println("E% Error");
   }
 
@@ -122,17 +121,21 @@ void loop()
   Serial.println(expectedV);
   Serial.print("V");
   
-  // PWM Output
-  pwmOutput = (255 * (expectedV / supplyVoltage));   // calculates output PWM for ECU
-  analogWrite(outPin, pwmOutput);                    // writes the PWM value to output pin
+  pwmOutput = (255 * (expectedV / supplyVoltage));
+  analogWrite(outPin, pwmOutput);
 }
 
 
 
 void setPwmFrequency(int pin, int divisor)
-{                                            // raises the timers linked to the PWM outputs
-  byte mode;                                 // so the PWM frequency can be raised or lowered.
-                                             // Prescaler of 1 sets PWM output to 32KHz (pin 3, 11)
+  /*
+  raises the timers linked to the PWM outputs so
+  the PWM frequency can be raised or lowered. Prescaler
+  of 1 sets PWM output to 32KHz (pin 3, 11)
+  */
+{ 
+  byte mode;
+  
   if(pin == 3 || pin == 11)
   {
     switch(divisor)
