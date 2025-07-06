@@ -10,3 +10,5 @@ Using a GM ethanol sensor, which reports ethanol content from 0% (50Hz) to 100% 
 
 *POTENTIAL ADDITIONS:*
 While it is possible to utilize an LCD to display the ethanol content, the beauty in the current form is that it is lightweight, and integrated directly into the OEM ECU. An LCD could, however, become useful in displaying fuel temperature data (which could be done with no additional hardware) or simply monitoring ethanol content without a direct link to the ECU. Fuel temperature data may be added later in the form of a second .ino file, E85_ECU_V2.
+
+**NOTE:** Designed specifically for the ATmega328P Nano and is not compatible with the newer Nano ESP32.
